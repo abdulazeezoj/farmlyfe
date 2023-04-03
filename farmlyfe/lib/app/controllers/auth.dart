@@ -49,7 +49,7 @@ class AuthController extends GetxController {
                 Get.toNamed(FarmLyfeRoutes.crop);
               } else {
                 // Navigate to the profile page
-                Get.toNamed(FarmLyfeRoutes.profile);
+                Get.toNamed(FarmLyfeRoutes.weather);
               }
             } else {
               throw 'Invalid user';

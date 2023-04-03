@@ -16,7 +16,7 @@ class BottomBar extends StatelessWidget {
       () => BottomNavigationBar(
         currentIndex: _globalController.getPageIndex,
         onTap: (index) => {
-          if (index == 3)
+          if (index == 2)
             {
               _authController.logout(),
             }
@@ -25,9 +25,8 @@ class BottomBar extends StatelessWidget {
               _globalController.setPageIndex(index),
             }
         },
-        type: BottomNavigationBarType.fixed,
-        elevation: 8.0,
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        // type: BottomNavigationBarType.fixed,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.cloudy_snowing),
@@ -38,11 +37,6 @@ class BottomBar extends StatelessWidget {
             icon: Icon(Icons.grass_sharp),
             label: 'Crops',
             tooltip: 'Crops',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-            tooltip: 'Profile',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.logout),
