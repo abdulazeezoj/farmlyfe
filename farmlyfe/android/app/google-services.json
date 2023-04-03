@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "472535913302",
+    "project_id": "striped-century-379318",
+    "storage_bucket": "striped-century-379318.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472535913302:android:7e88b112f51fc02775bcf7",
+        "android_client_info": {
+          "package_name": "com.example.farmlyfe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "472535913302-ass2el9kthkuju6i2rju6ksed2p23167.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.farmlyfe",
+            "certificate_hash": "50d9e66be5bc5d63f49ddeea5b291441529d57ad"
+          }
+        },
+        {
+          "client_id": "472535913302-28c7johvs1nu0r70sq4gr03jsa79d4if.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuzZOcD8c6t_lQJ3tjBczYJ0HfwKkf2bo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472535913302-28c7johvs1nu0r70sq4gr03jsa79d4if.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "472535913302-mjulf0rk11vomikb1h73fg0apqr0fc74.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.farmlyfe"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
