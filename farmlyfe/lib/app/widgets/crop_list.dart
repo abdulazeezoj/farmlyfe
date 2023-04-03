@@ -22,9 +22,7 @@ class CropList extends StatelessWidget {
       child: Obx(
         // Show Circular Progress if loading of list of crop with image crop and part of the general info
         () => cropController.getLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
+            ? const CropListSkeleton()
             : ListView.builder(
                 controller: cropController.scrollController,
                 itemCount: cropController.getCrops.length,
@@ -41,12 +39,15 @@ class CropList extends StatelessWidget {
 }
 
 class CropListCard extends StatelessWidget {
-  const CropListCard({
+  CropListCard({
     super.key,
     required this.crop,
     required this.cropIndex,
     required this.cropCount,
   });
+
+  // Controllers
+  final CropController cropController = Get.put(CropController());
 
   final Crop crop;
   final int cropIndex;
@@ -127,29 +128,33 @@ class CropListCard extends StatelessWidget {
                 ],
               ),
             ),
+            
             // Favorite button
-            Positioned(
-              top: 8,
-              right: 8,
-              child: Container(
-                width: 25,
-                height: 25,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
+            Obx(
+              () => Positioned(
+                top: 8,
+                right: 8,
+                child: GestureDetector(
+                  onTap: () {
+                    // If the crop is already favorited, remove it from the list
+                    if (cropController.getCropFavorites.contains(crop)) {
+                      cropController.removeCropFromFavorites(crop);
+                    } else {
+                      // If the crop is not favorited, add it to the list
+                      cropController.addCropToFavorites(crop);
+                    }
+                  },
+                  child: SizedBox(
+                    width: 25,
+                    height: 25,
+                    child: Icon(
+                      cropController.getCropFavorites.contains(crop)
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      size: 25,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.favorite_border,
-                  size: 20,
-                  color: Colors.red,
+                  ),
                 ),
               ),
             ),
