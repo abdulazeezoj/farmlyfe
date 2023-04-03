@@ -27,13 +27,8 @@ class WeatherHeader extends StatelessWidget implements PreferredSizeWidget {
       elevation: 2,
       centerTitle: true,
       toolbarHeight: preferredSize.height,
-      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       shadowColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(20),
-        ),
-      ),
       titleSpacing: 0,
       title: Obx(
         () => weatherController.getLoading
@@ -148,8 +143,6 @@ class WeatherHeader extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
       ),
-      toolbarTextStyle: Theme.of(context).textTheme.bodyText2,
-      titleTextStyle: Theme.of(context).textTheme.headline6,
     );
   }
 }
@@ -176,9 +169,9 @@ class WeatherHeaderDetailsCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
-            spreadRadius: 0.5,
-            blurRadius: 2,
-            offset: const Offset(0, 4), // changes position of shadow
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 0), // changes position of shadow
           ),
         ],
       ),
