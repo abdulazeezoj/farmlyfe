@@ -261,7 +261,7 @@ class WeatherController extends GetxController {
 
         // set the weather hourly unit
         setWeatherHourlyUnits(weather.hourlyUnits);
-      
+
         // set the weather daily
         setWeatherDaily(weather.daily);
 
