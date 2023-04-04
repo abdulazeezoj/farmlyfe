@@ -144,10 +144,21 @@ class CropFavoriteCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    'https://placeimg.com/640/480/any',
-                    fit: BoxFit.cover,
-                    height: 100,
+                  child: FutureBuilder(
+                    future: cropController.getCropImage(crop.cropName),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Image.network(
+                          snapshot.data.toString(),
+                          height: 100,
+                          fit: BoxFit.cover,
+                        );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
                   ),
                 ),
                 SizedBox(

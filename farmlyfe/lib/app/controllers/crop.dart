@@ -1,13 +1,15 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmlyfe/app/controllers/auth.dart';
 import 'package:farmlyfe/app/models/crop.dart';
 import 'package:farmlyfe/app/widgets/snackbar.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CropController extends GetxController {
+  // Services
+  Reference storageRef = FirebaseStorage.instance.ref().child('crops');
+
   // Controllers
   AuthController authController = Get.put(AuthController());
   ScrollController scrollController = ScrollController();
@@ -117,7 +119,7 @@ class CropController extends GetxController {
       // Set the list of favorites to an empty list
       setCropFavorites([]);
     }
-    
+
     // Set the loading state to false
     setCropFavoritesLoading(false);
   }
@@ -179,16 +181,9 @@ class CropController extends GetxController {
     return favoriteCropsRefs.contains(crop.cropId);
   }
 
-  // Function to fetch more crops from firestore when the user scrolls to the end of the page
-  onScroll() async {
-    // Listen to the scroll controller
-    scrollController.addListener(() {
-      // Check if the scroll controller has reached the end of the page
-      if (scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent) {
-        // Get more crops from firebase firestore
-        fetchMoreCrops(limit: cropsLimit);
-      }
-    });
+  // Function to get crop image crops folder in firebase storage
+  Future<String> getCropImage(String cropName) async {
+    String imageUrl = await storageRef.child('${cropName.toLowerCase()}.jpeg').getDownloadURL();
+    return imageUrl;
   }
 }

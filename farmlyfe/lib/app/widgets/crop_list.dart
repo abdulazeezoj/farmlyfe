@@ -109,9 +109,20 @@ class CropListCard extends StatelessWidget {
                     height: 100,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        'https://placeimg.com/640/480/any',
-                        fit: BoxFit.cover,
+                      child: FutureBuilder(
+                        future: cropController.getCropImage(crop.cropName),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Image.network(
+                              snapshot.data.toString(),
+                              fit: BoxFit.cover,
+                            );
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        },
                       ),
                     ),
                   ),
