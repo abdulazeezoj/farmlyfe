@@ -25,28 +25,15 @@ class AuthView extends StatelessWidget {
                   height: 200,
                   child: Column(
                     children: [
-                      const Icon(
-                        Icons.grass_sharp,
-                        size: 100,
-                        color: Colors.green,
+                      const Image(
+                        image: AssetImage('assets/icons/farmlyfe_full_nbg.png'),
+                        width: 100,
+                        height: 100,
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Let\'s get you started...',
-                        style: TextStyle(
-                          fontSize: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .fontSize,
-                          fontWeight: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .fontWeight,
-                          fontFamily: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .fontFamily,
-                        ),
+                        'Let\'s get you started',
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ],
                   ),
