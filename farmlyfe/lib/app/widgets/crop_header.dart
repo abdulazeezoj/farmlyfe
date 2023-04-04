@@ -60,7 +60,9 @@ class CropFavoriteList extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
                 child: Text(
-                  'Favorite Crops',
+                  cropController.getCropFavorites.isEmpty
+                      ? 'Add Favorite Crops'
+                      : 'Favorite Crops',
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,
                 ),

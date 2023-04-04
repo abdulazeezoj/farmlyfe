@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmlyfe/app/configs/routes.dart';
 import 'package:farmlyfe/app/widgets/dialog.dart';
 import 'package:farmlyfe/app/widgets/snackbar.dart';
@@ -40,17 +41,22 @@ class AuthController extends GetxController {
               // Set the user
               setUser(userCredential.user);
 
-              // Close the loading indicator
-              LoadingDialogWidget.close();
+              // Check if user email is in favorites collection
+              hasFavorite(userCredential).then((valueRef) {
+                // Get query snapshot from reference
+                valueRef.get().then((value) {
+                  // Close the loading indicator
+                  LoadingDialogWidget.close();
 
-              // Check if the user is new
-              if (userCredential.additionalUserInfo!.isNewUser) {
-                // Navigate to the crop page
-                Get.toNamed(FarmLyfeRoutes.crop);
-              } else {
-                // Navigate to the profile page
-                Get.toNamed(FarmLyfeRoutes.weather);
-              }
+                  // Navigate to the home page
+                  Get.toNamed(FarmLyfeRoutes
+                      .pagesMap[FarmLyfeRoutes.initialPage] as String);
+                }).catchError((error) {
+                  throw error;
+                });
+              }).catchError((error) {
+                throw error;
+              });
             } else {
               throw 'Invalid user';
             }
@@ -72,8 +78,6 @@ class AuthController extends GetxController {
   }
 
   logout() async {
-    SnackbarWidget.showInfo('Logging out...');
-
     try {
       // Firebase sign out
       _firebaseAuth.signOut().then((value) {
@@ -92,6 +96,30 @@ class AuthController extends GetxController {
       });
     } catch (e) {
       SnackbarWidget.showError(e.toString());
+    }
+  }
+
+  // Function t0 check if user email in favorite collection
+  Future<DocumentReference> hasFavorite(UserCredential userCredential) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('favorites')
+        .where('email', isEqualTo: userCredential.user?.email)
+        .get();
+
+    // Check if querySnapshot is empty
+    if (querySnapshot.docs.isEmpty) {
+      // Add user email to favorites collection
+      return FirebaseFirestore.instance.collection('favorites').add({
+        'email': userCredential.user?.email,
+        'crops': [],
+      });
+    } else {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('favorites')
+          .where('email', isEqualTo: userCredential.user?.email)
+          .get();
+
+      return querySnapshot.docs.first.reference;
     }
   }
 }

@@ -103,16 +103,21 @@ class CropController extends GetxController {
     List<DocumentReference> cropRefs =
         await querySnapshot.docs.first.get('crops').cast<DocumentReference>();
 
-    // Fetch the crops from the crops collection
-    QuerySnapshot cropQuerySnapshot = await FirebaseFirestore.instance
-        .collection('crops')
-        .where(FieldPath.documentId,
-            whereIn: cropRefs.map((e) => e.id).toList())
-        .get();
+    // Fetch the crops from the crops collection if the list is not empty
+    if (cropRefs.isNotEmpty) {
+      QuerySnapshot cropQuerySnapshot = await FirebaseFirestore.instance
+          .collection('crops')
+          .where(FieldPath.documentId,
+              whereIn: cropRefs.map((e) => e.id).toList())
+          .get();
 
-    // Add the crops to the list of favorites preventing duplicates
-    setCropFavorites(cropFromDocumentSnapshot(cropQuerySnapshot.docs));
-
+      // Add the crops to the list of favorites preventing duplicates
+      setCropFavorites(cropFromDocumentSnapshot(cropQuerySnapshot.docs));
+    } else {
+      // Set the list of favorites to an empty list
+      setCropFavorites([]);
+    }
+    
     // Set the loading state to false
     setCropFavoritesLoading(false);
   }
