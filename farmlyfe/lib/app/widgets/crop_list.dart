@@ -14,26 +14,38 @@ class CropList extends StatelessWidget {
 
   // Controllers
   final CropController cropController = Get.put(CropController());
+  final ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
-      child: Obx(
-        // Show Circular Progress if loading of list of crop with image crop and part of the general info
-        () => cropController.getLoading
-            ? const CropListSkeleton()
-            : ListView.builder(
-                controller: cropController.scrollController,
-                itemCount: cropController.getCrops.length,
-                itemBuilder: (context, index) {
-                  return CropListCard(
-                      crop: cropController.getCrops[index],
-                      cropIndex: index,
-                      cropCount: cropController.getCrops.length);
-                },
+    return Obx(
+      // Show Circular Progress if loading of list of crop with image crop and part of the general info
+      () => cropController.getCropsLoading
+          ? const CropListSkeleton()
+          : ListView.builder(
+              // controller: cropController.scrollController,
+              controller: scrollController
+                ..addListener(() {
+                  if (scrollController.position.pixels ==
+                      scrollController.position.maxScrollExtent) {
+                    cropController.fetchMoreCrops(
+                      limit: cropController.cropsLimit,
+                    );
+                  }
+                }),
+              padding: const EdgeInsets.only(
+                left: 15,
+                right: 15,
+                top: 20,
               ),
-      ),
+              itemCount: cropController.getCrops.length,
+              itemBuilder: (context, index) {
+                return CropListCard(
+                    crop: cropController.getCrops[index],
+                    cropIndex: index,
+                    cropCount: cropController.getCrops.length);
+              },
+            ),
     );
   }
 }
@@ -66,7 +78,7 @@ class CropListCard extends StatelessWidget {
       },
       // Container for the crop card with floating favorite button
       child: Container(
-        margin: const EdgeInsets.only(bottom: 15),
+        margin: const EdgeInsets.only(bottom: 20),
         child: Stack(
           children: [
             // Crop card
@@ -74,8 +86,19 @@ class CropListCard extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               height: 108,
               decoration: BoxDecoration(
-                color: Colors.grey,
+                color: Theme.of(context).colorScheme.onInverseSurface,
                 borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 0), // changes position of shadow
+                  ),
+                ],
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,10 +107,6 @@ class CropListCard extends StatelessWidget {
                     margin: const EdgeInsets.only(right: 10),
                     width: 80,
                     height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
@@ -128,7 +147,7 @@ class CropListCard extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Favorite button
             Obx(
               () => Positioned(
@@ -137,18 +156,18 @@ class CropListCard extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     // If the crop is already favorited, remove it from the list
-                    if (cropController.getCropFavorites.contains(crop)) {
-                      cropController.removeCropFromFavorites(crop);
+                    if (cropController.isFavoriteCrop(crop)) {
+                      cropController.removeCropFromFavorite(crop);
                     } else {
                       // If the crop is not favorited, add it to the list
-                      cropController.addCropToFavorites(crop);
+                      cropController.addCropToFavorite(crop);
                     }
                   },
                   child: SizedBox(
                     width: 25,
                     height: 25,
                     child: Icon(
-                      cropController.getCropFavorites.contains(crop)
+                      cropController.isFavoriteCrop(crop)
                           ? Icons.favorite
                           : Icons.favorite_border,
                       size: 25,

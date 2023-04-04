@@ -15,7 +15,7 @@ class CropHeader extends StatelessWidget implements PreferredSizeWidget {
   final AuthController authController = Get.put(AuthController());
 
   @override
-  Size get preferredSize => const Size.fromHeight(310);
+  Size get preferredSize => const Size.fromHeight(240);
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +32,8 @@ class CropHeader extends StatelessWidget implements PreferredSizeWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Search Bar and Profile Icon
-            CropSearch(),
-
             // Favorite Crops
-            CropFavorite(),
+            CropFavoriteList(),
           ],
         ),
       ),
@@ -44,78 +41,9 @@ class CropHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-class CropSearch extends StatelessWidget {
-  CropSearch({
-    super.key,
-  });
-
-  // Controllers
-  final GlobalController globalController = Get.put(GlobalController());
-  final AuthController authController = Get.put(AuthController());
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      // color: Colors.red,
-      padding: const EdgeInsets.all(15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Search Bar with search icon
-          Expanded(
-            child: Container(
-                height: 40,
-                margin: const EdgeInsets.only(
-                  right: 10,
-                ),
-                child: TextField(
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.onInverseSurface,
-                    contentPadding: EdgeInsets.zero,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide.none,
-                    ),
-                    hintText: 'Search for a crop...',
-                    prefixIcon: const Icon(
-                      Icons.search,
-                      color: Colors.black,
-                    ),
-                  ),
-                  textInputAction: TextInputAction.search,
-                )),
-          ),
-          // CircleAvatar with profile icon
-          SizedBox(
-            height: 40,
-            width: 40,
-            child: GestureDetector(
-              onTap: () {
-                // Navigate to profile page
-                globalController.setPageIndex(2);
-              },
-              child: CircleAvatar(
-                radius: 20,
-                backgroundImage: NetworkImage(
-                  authController.getUser?.photoURL ??
-                      'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png',
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // CropFavorite
-class CropFavorite extends StatelessWidget {
-  CropFavorite({Key? key}) : super(key: key);
+class CropFavoriteList extends StatelessWidget {
+  CropFavoriteList({Key? key}) : super(key: key);
 
   // Controllers
   final CropController cropController = Get.put(CropController());
@@ -245,18 +173,18 @@ class CropFavoriteCard extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     // If the crop is already favorited, remove it from the list
-                    if (cropController.getCropFavorites.contains(crop)) {
-                      cropController.removeCropFromFavorites(crop);
+                    if (cropController.isFavoriteCrop(crop)) {
+                      cropController.removeCropFromFavorite(crop);
                     } else {
                       // If the crop is not favorited, add it to the list
-                      cropController.addCropToFavorites(crop);
+                      cropController.addCropToFavorite(crop);
                     }
                   },
                   child: SizedBox(
                     width: 25,
                     height: 25,
                     child: Icon(
-                      cropController.getCropFavorites.contains(crop)
+                      cropController.isFavoriteCrop(crop)
                           ? Icons.favorite
                           : Icons.favorite_border,
                       size: 25,

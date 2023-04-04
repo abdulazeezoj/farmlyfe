@@ -2,16 +2,26 @@
 //
 //     final crop = cropFromJson(jsonString);
 
-import 'dart:convert';
+// import 'dart:convert';
 
-List<Crop> cropFromJson(String str) =>
-    List<Crop>.from(json.decode(str).map((x) => Crop.fromJson(x)));
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-String cropToJson(List<Crop> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+// List<Crop> cropFromJson(String str) =>
+//     List<Crop>.from(json.decode(str).map((x) => Crop.fromJson(x)));
+
+// String cropToJson(List<Crop> data) =>
+//     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+
+List<Crop> cropFromDocumentSnapshot(List<DocumentSnapshot> docs) {
+  return docs
+      .map((doc) => Crop.fromDocumentSnapshot(doc as DocumentSnapshot<Map<String, dynamic>>))
+      .toList();
+}
 
 class Crop {
   Crop({
+    this.cropId,
     required this.cropName,
     required this.imgUrl,
     required this.generalInformation,
@@ -31,13 +41,14 @@ class Crop {
     required this.harvesting,
   });
 
+  String? cropId;
   String cropName;
   String imgUrl;
   String generalInformation;
-  HarvestingTemperature temperature;
-  HarvestingTemperature rainfall;
-  HarvestingTemperature sowingTemperature;
-  HarvestingTemperature harvestingTemperature;
+  ClimateFactor temperature;
+  ClimateFactor rainfall;
+  ClimateFactor sowingTemperature;
+  ClimateFactor harvestingTemperature;
   String soil;
   String landPreparation;
   String sowing;
@@ -45,42 +56,69 @@ class Crop {
   String fertilizer;
   String weedControl;
   String irrigation;
-  List<Plant> plantDisease;
-  List<Plant> plantPest;
+  List<CropProtection> plantDisease;
+  List<CropProtection> plantPest;
   String harvesting;
 
-  factory Crop.fromJson(Map<String, dynamic> json) => Crop(
-        cropName: json["crop_name"],
-        imgUrl: json["img_url"],
-        generalInformation: json["general_information"],
-        temperature: HarvestingTemperature.fromJson(json["temperature"]),
-        rainfall: HarvestingTemperature.fromJson(json["rainfall"]),
-        sowingTemperature:
-            HarvestingTemperature.fromJson(json["sowing_temperature"]),
-        harvestingTemperature:
-            HarvestingTemperature.fromJson(json["harvesting_temperature"]),
-        soil: json["soil"],
-        landPreparation: json["land_preparation"],
-        sowing: json["sowing"],
-        seed: json["seed"],
-        fertilizer: json["fertilizer"],
-        weedControl: json["weed_control"],
-        irrigation: json["irrigation"],
-        plantDisease: List<Plant>.from(
-            json["plant_disease"].map((x) => Plant.fromJson(x))),
-        plantPest:
-            List<Plant>.from(json["plant_pest"].map((x) => Plant.fromJson(x))),
-        harvesting: json["harvesting"],
-      );
+  // factory Crop.fromJson(Map<String, dynamic> json) => Crop(
+  //       cropName: json["crop_name"],
+  //       imgUrl: json["img_url"],
+  //       generalInformation: json["general_information"],
+  //       temperature: ClimateFactor.fromMap(json["temperature"]),
+  //       rainfall: ClimateFactor.fromMap(json["rainfall"]),
+  //       sowingTemperature:
+  //           ClimateFactor.fromMap(json["sowing_temperature"]),
+  //       harvestingTemperature:
+  //           ClimateFactor.fromMap(json["harvesting_temperature"]),
+  //       soil: json["soil"],
+  //       landPreparation: json["land_preparation"],
+  //       sowing: json["sowing"],
+  //       seed: json["seed"],
+  //       fertilizer: json["fertilizer"],
+  //       weedControl: json["weed_control"],
+  //       irrigation: json["irrigation"],
+  //       plantDisease: List<CropProtection>.from(
+  //           json["plant_disease"].map((x) => CropProtection.fromMap(x))),
+  //       plantPest:
+  //           List<CropProtection>.from(json["plant_pest"].map((x) => CropProtection.fromMap(x))),
+  //       harvesting: json["harvesting"],
+  //     );
 
-  Map<String, dynamic> toJson() => {
+  factory Crop.fromDocumentSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> doc) {
+    return Crop(
+      cropId: doc.id,
+      cropName: doc['crop_name'],
+      imgUrl: doc['img_url'],
+      generalInformation: doc['general_information'],
+      temperature: ClimateFactor.fromMap(doc['temperature']),
+      rainfall: ClimateFactor.fromMap(doc['rainfall']),
+      sowingTemperature: ClimateFactor.fromMap(doc['sowing_temperature']),
+      harvestingTemperature:
+          ClimateFactor.fromMap(doc['harvesting_temperature']),
+      soil: doc['soil'],
+      landPreparation: doc['land_preparation'],
+      sowing: doc['sowing'],
+      seed: doc['seed'],
+      fertilizer: doc['fertilizer'],
+      weedControl: doc['weed_control'],
+      irrigation: doc['irrigation'],
+      plantDisease: List<CropProtection>.from(
+          doc['plant_disease'].map((x) => CropProtection.fromMap(x))),
+      plantPest: List<CropProtection>.from(
+          doc['plant_pest'].map((x) => CropProtection.fromMap(x))),
+      harvesting: doc['harvesting'],
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
         "crop_name": cropName,
         "img_url": imgUrl,
         "general_information": generalInformation,
-        "temperature": temperature.toJson(),
-        "rainfall": rainfall.toJson(),
-        "sowing_temperature": sowingTemperature.toJson(),
-        "harvesting_temperature": harvestingTemperature.toJson(),
+        "temperature": temperature.toMap(),
+        "rainfall": rainfall.toMap(),
+        "sowing_temperature": sowingTemperature.toMap(),
+        "harvesting_temperature": harvestingTemperature.toMap(),
         "soil": soil,
         "land_preparation": landPreparation,
         "sowing": sowing,
@@ -88,15 +126,14 @@ class Crop {
         "fertilizer": fertilizer,
         "weed_control": weedControl,
         "irrigation": irrigation,
-        "plant_disease":
-            List<dynamic>.from(plantDisease.map((x) => x.toJson())),
-        "plant_pest": List<dynamic>.from(plantPest.map((x) => x.toJson())),
+        "plant_disease": List<dynamic>.from(plantDisease.map((x) => x.toMap())),
+        "plant_pest": List<dynamic>.from(plantPest.map((x) => x.toMap())),
         "harvesting": harvesting,
       };
 }
 
-class HarvestingTemperature {
-  HarvestingTemperature({
+class ClimateFactor {
+  ClimateFactor({
     required this.minimum,
     required this.maximum,
     required this.unit,
@@ -106,22 +143,22 @@ class HarvestingTemperature {
   String maximum;
   String unit;
 
-  factory HarvestingTemperature.fromJson(Map<String, dynamic> json) =>
-      HarvestingTemperature(
-        minimum: json["minimum"],
-        maximum: json["maximum"],
-        unit: json["unit"],
+  factory ClimateFactor.fromMap(Map<String, dynamic> climateFactorMap) =>
+      ClimateFactor(
+        minimum: climateFactorMap["minimum"],
+        maximum: climateFactorMap["maximum"],
+        unit: climateFactorMap["unit"],
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toMap() => {
         "minimum": minimum,
         "maximum": maximum,
         "unit": unit,
       };
 }
 
-class Plant {
-  Plant({
+class CropProtection {
+  CropProtection({
     required this.name,
     required this.symptoms,
     required this.control,
@@ -131,13 +168,14 @@ class Plant {
   String symptoms;
   String control;
 
-  factory Plant.fromJson(Map<String, dynamic> json) => Plant(
-        name: json["name"],
-        symptoms: json["symptoms"],
-        control: json["control"],
+  factory CropProtection.fromMap(Map<String, dynamic> cropProtectionMap) =>
+      CropProtection(
+        name: cropProtectionMap["name"],
+        symptoms: cropProtectionMap["symptoms"],
+        control: cropProtectionMap["control"],
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toMap() => {
         "name": name,
         "symptoms": symptoms,
         "control": control,
