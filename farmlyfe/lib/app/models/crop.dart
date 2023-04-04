@@ -2,16 +2,7 @@
 //
 //     final crop = cropFromJson(jsonString);
 
-// import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-// List<Crop> cropFromJson(String str) =>
-//     List<Crop>.from(json.decode(str).map((x) => Crop.fromJson(x)));
-
-// String cropToJson(List<Crop> data) =>
-//     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
 
 List<Crop> cropFromDocumentSnapshot(List<DocumentSnapshot> docs) {
   return docs
