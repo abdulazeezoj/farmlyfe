@@ -22,13 +22,13 @@ class AuthView extends StatelessWidget {
                   alignment: Alignment.center,
                   margin: const EdgeInsets.all(20),
                   padding: const EdgeInsets.all(20),
-                  height: 200,
+                  height: 250,
                   child: Column(
                     children: [
                       const Image(
                         image: AssetImage('assets/icons/farmlyfe_full_nbg.png'),
-                        width: 100,
-                        height: 100,
+                        width: 150,
+                        height: 150,
                       ),
                       const SizedBox(height: 10),
                       Text(

@@ -29,7 +29,15 @@ class AuthController extends GetxController {
     try {
       // Google sign in with firebase auth with catch for errors
       _googleSignIn.signIn().then((googleUser) {
-        googleUser?.authentication.then((googleAuth) {
+        // Check if user cancelled the sign in
+        if (googleUser == null) {
+          // Close the loading indicator
+          LoadingDialogWidget.close();
+
+          return;
+        }
+        
+        googleUser.authentication.then((googleAuth) {
           final credential = GoogleAuthProvider.credential(
             accessToken: googleAuth.accessToken,
             idToken: googleAuth.idToken,
